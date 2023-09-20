@@ -1,36 +1,33 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-using System;
-using TMPro;
 using Firebase.Auth;
 using Firebase.Database;
+using TMPro;
 
 public class a : MonoBehaviour
 {
-    
-    [SerializeField]
-    private Button _registrationButton;
-    private Coroutine _registrationCorutine;
+    [SerializeField] private Button _registrationButton;
+    private Coroutine _registrationCoroutine;
     private DatabaseReference mDatabaseRef;
 
     void Reset()
     {
         _registrationButton = GetComponent<Button>();
     }
+
     void Start()
     {
         _registrationButton.onClick.AddListener(HandleRegisterButtonClicked);
         mDatabaseRef = FirebaseDatabase.DefaultInstance.RootReference;
     }
+
     void HandleRegisterButtonClicked()
     {
         string email = GameObject.Find("InputEmail").GetComponent<TMP_InputField>().text;
         string password = GameObject.Find("InputPassword").GetComponent<TMP_InputField>().text;
 
-        _registrationCorutine = StartCoroutine(RegisterUser(email, password));
-
+        _registrationCoroutine = StartCoroutine(RegisterUser(email, password));
     }
 
     private IEnumerator RegisterUser(string email, string password)
@@ -43,11 +40,10 @@ public class a : MonoBehaviour
         if (registerTask.IsCanceled)
         {
             Debug.LogError($"CreateUserWithEmailAndPasswordAsync is canceled");
-
         }
         else if (registerTask.IsFaulted)
         {
-            Debug.LogError($"CreateUserWithEmailAndPasswordAsync encoutered error" + registerTask.Exception);
+            Debug.LogError($"CreateUserWithEmailAndPasswordAsync encountered error" + registerTask.Exception);
         }
         else
         {
@@ -59,6 +55,6 @@ public class a : MonoBehaviour
 
             mDatabaseRef.Child("users").Child(result.User.UserId).Child("username").SetValueAsync(name);
         }
-        
     }
 }
+

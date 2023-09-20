@@ -1,4 +1,6 @@
 using Firebase.Auth;
+using Firebase.Database;
+using Firebase.Extensions;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -27,9 +29,26 @@ public class UsernameLabel : MonoBehaviour
         var currentUser = FirebaseAuth.DefaultInstance.CurrentUser;
         if(currentUser != null)
         {
-            _label.text = currentUser.Email;
+            SetLebelUsername(currentUser.UserId);
         }
     }
 
+    private void SetLebelUsername(string userId)
+    {
+            FirebaseDatabase.DefaultInstance
+            .GetReference("users/"+userId+"/username" )
+            .GetValueAsync().ContinueWithOnMainThread(task => {
+              if (task.IsFaulted)
+              {
+                    Debug.Log(task.Exception);
+                  }
+              else if (task.IsCompleted)
+              {
+                  DataSnapshot snapshot = task.Result;
+                    //Debug.Log(snapshot.Value);
+                    _label.text = (string)snapshot.Value;
+                  }
+          });
+    }
    
 }
