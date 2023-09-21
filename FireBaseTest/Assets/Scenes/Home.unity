@@ -1865,7 +1865,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _loginButton: {fileID: 1127083374}
   _emailInputField: {fileID: 1703872194}
-  _emailPasswordField: {fileID: 1154438706}
+  _passwordInputField: {fileID: 1154438706}
 --- !u!1 &1154438704
 GameObject:
   m_ObjectHideFlags: 0

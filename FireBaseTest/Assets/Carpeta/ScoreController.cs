@@ -20,7 +20,7 @@ public class ScoreController : MonoBehaviour
 
     // Evento que se dispara cuando el puntaje se actualiza
     public event Action<int> OnScoreUpdated;
-    private userdatasupernaechaeiralocambiadespues[] user_to_deploy = new userdatasupernaechaeiralocambiadespues[5];
+    private userdatsuper[] user_to_deploy = new userdatsuper[5];
     private Dictionary<string, int> all_users = new Dictionary<string, int>();
 
     void Start()
@@ -113,18 +113,22 @@ public class ScoreController : MonoBehaviour
             foreach (var userDoc in (Dictionary<string, object>)args.Snapshot.Value)
             {
                 var userObject = (Dictionary<string, object>)userDoc.Value;
-                string username = userObject["username"].ToString();
-                int userScore = int.Parse(userObject["score"].ToString());
-                leaderboardData.Add(username, userScore);
-
-                // Actualiza los TextMeshProUGUI correspondientes en la UI
-                if (i < usernameTexts.Count && i < scoreTexts.Count)
+                if (userObject.ContainsKey("score"))
                 {
-                    usernameTexts[i].text = username;
-                    scoreTexts[i].text = userScore.ToString();
-                    i++;
+                    string username = userObject["username"].ToString();
+                    int userScore = int.Parse(userObject["score"].ToString());
+                    leaderboardData.Add(username, userScore);
+
+                    // Actualiza los TextMeshProUGUI correspondientes en la UI
+                    if (i < usernameTexts.Count && i < scoreTexts.Count)
+                    {
+                        usernameTexts[i].text = username;
+                        scoreTexts[i].text = userScore.ToString();
+                        i++;
+                    }
                 }
             }
+
         }
     }
 
@@ -179,7 +183,7 @@ public class ScoreController : MonoBehaviour
 
                 for (int i = 0; i < sortedUsers.Count || i < 5; i++)
                 {
-                    userdatasupernaechaeiralocambiadespues user = new userdatasupernaechaeiralocambiadespues();
+                    userdatsuper user = new userdatsuper();
                         user.username = list_Users_Name[i];
                         user.score = list_Users_Score[i];
                         user_to_deploy[i] = user;
@@ -201,7 +205,7 @@ public class ScoreController : MonoBehaviour
 }
 
 [System.Serializable]
-public class userdatasupernaechaeiralocambiadespues 
+public class userdatsuper 
 {
     public string username;
     public int score;

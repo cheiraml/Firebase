@@ -22,6 +22,13 @@ public class PasswordReset : MonoBehaviour
     {
         string email = GameObject.Find("InputEmail").GetComponent<TMP_InputField>().text;
 
+        // Comprobar si el campo de correo está vacío
+        if (string.IsNullOrEmpty(email))
+        {
+            Debug.LogError("Por favor, ingrese su dirección de correo.");
+            return;
+        }
+
         StartCoroutine(ResetPassword(email));
     }
 
