@@ -64,6 +64,7 @@ public class a : MonoBehaviour
             string name = GameObject.Find("InputUser").GetComponent<TMP_InputField>().text;
 
             mDatabaseRef.Child("users").Child(result.User.UserId).Child("username").SetValueAsync(name);
+            mDatabaseRef.Child("users").Child(result.User.UserId).Child("score").SetValueAsync(0);
         }
     }
 }

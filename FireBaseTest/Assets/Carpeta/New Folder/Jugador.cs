@@ -66,7 +66,7 @@ public class Jugador : MonoBehaviour
         if (other.CompareTag("Pelota"))
         {
             Destroy(other.gameObject);
-            puntaje += 10;
+            puntaje += 25;
             ActualizarPuntaje();
 
             if (juegoTerminado)

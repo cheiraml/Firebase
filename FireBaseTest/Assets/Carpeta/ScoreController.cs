@@ -22,6 +22,18 @@ public class ScoreController : MonoBehaviour
     public event Action<int> OnScoreUpdated;
     private userdatsuper[] user_to_deploy = new userdatsuper[5];
     private Dictionary<string, int> all_users = new Dictionary<string, int>();
+    public static ScoreController Instance { get; private set; } = null;
+
+    private void Awake()
+    {
+        if (Instance != null)
+        {
+            Destroy(this.gameObject);
+            return;
+        }
+
+        Instance = this;
+    }
 
     void Start()
     {
@@ -145,7 +157,6 @@ public class ScoreController : MonoBehaviour
     // Función para obtener los puntajes más altos
     public void GetUsersHighestScores()
     {
-
         FirebaseDatabase.DefaultInstance
             .GetReference("users").OrderByChild("score").LimitToLast(5)
             .GetValueAsync().ContinueWithOnMainThread(task =>
@@ -158,50 +169,39 @@ public class ScoreController : MonoBehaviour
                 {
                     DataSnapshot snapshot = task.Result;
 
+                // Crear una lista para almacenar los datos ordenados
+                List<userdatsuper> sortedUsers = new List<userdatsuper>();
+
+
                     foreach (var userDoc in (Dictionary<string, object>)snapshot.Value)
                     {
                         var userObject = (Dictionary<string, object>)userDoc.Value;
                         string username = (string)userObject["username"];
                         int score = Convert.ToInt32(userObject["score"]);
-                        if (all_users.ContainsKey(username))
-                        {
-                            if (all_users[username] < score) 
-                            {
-                                all_users[username] = score;
-                            }
-                        }
-                        else 
-                        {
-                            all_users.Add(username, score);
-                        }
-                       
+
+                        Debug.Log(score);
+
+                    // Crear un objeto userdatsuper y agregarlo a la lista
+                        userdatsuper user = new userdatsuper();
+                        user.username = username;
+                        user.score = score;
+                        sortedUsers.Add(user);
                     }
 
-                    var sortedUsers = all_users.OrderByDescending(x => x.Value).ToDictionary(x => x.Key, x => x.Value);
-                    var list_Users_Name = sortedUsers.Keys.ToList();
-                    var list_Users_Score = sortedUsers.Values.ToList();
+                // Ordenar la lista en orden descendente (mayor a menor)
+                sortedUsers = sortedUsers.OrderByDescending(x => x.score).ToList();
 
-                for (int i = 0; i < sortedUsers.Count || i < 5; i++)
-                {
-                    userdatsuper user = new userdatsuper();
-                        user.username = list_Users_Name[i];
-                        user.score = list_Users_Score[i];
-                        user_to_deploy[i] = user;
+                // Asignar los datos ordenados a los TextMeshProUGUI
+                for (int i = 0; i < sortedUsers.Count && i < 5; i++)
+                    {
+                        user_to_deploy[i] = sortedUsers[i];
                         usernameTexts[i].text = user_to_deploy[i].username;
                         scoreTexts[i].text = user_to_deploy[i].score.ToString();
-
+                    }
                 }
-
-
-
-            }
-
-        });
-        
-        
-
-        
+            });
     }
+
 }
 
 [System.Serializable]
